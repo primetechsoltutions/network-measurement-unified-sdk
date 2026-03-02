@@ -18,17 +18,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven {
             url = uri("https://jitpack.io")
-//            url = uri("C:\\Users\\Sazzad_PTSL\\Desktop\\MyBL SDK\\mybl-network-measurement-sdk\\network-sdk\\build\\outputs\\aar")
-//            url = uri("/Users/shebleredwan/Desktop/network_measurement_event_base_sdk/network-sdk/build/outputs/aar")
-
         }
-
-//        maven {
-//            url = uri("/Users/shebleredwan/Desktop/network_measurement_event_base_sdk/network-sdk/build/outputs/aar")
-////            url = uri("/Users/shebleredwan/Desktop/Work/Network SDK/MYBL-Event-Base-SDK-Test-v1.0.0-Updated")
-//
-//        }
-
     }
 }
 

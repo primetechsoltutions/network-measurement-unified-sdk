@@ -10,6 +10,8 @@ plugins {
     id("maven-publish")
 }
 
+version = project.findProperty("SdkVersion") as String? ?: "1.0.0"
+
 android {
     namespace = "com.ptsl.network_sdk"
     compileSdk = 36
@@ -111,14 +113,14 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.primetechsoltutions"
                 artifactId = "network-measurement-unified-sdk"
-                version = "1.0.0"
+                version = project.version.toString()
             }
 
             create<MavenPublication>("debug") {
                 from(components["debug"])
                 groupId = "com.github.primetechsoltutions"
                 artifactId = "network-measurement-unified-sdk-debug"
-                version = "1.0.0"
+                version = project.version.toString()
             }
         }
     }

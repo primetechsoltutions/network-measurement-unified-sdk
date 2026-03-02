@@ -5,6 +5,7 @@ import com.ptsl.network_sdk.data_model.FTPCellInfoGetDataRequest
 import com.ptsl.network_sdk.data_model.FTPNetworkDataRequest
 import com.ptsl.network_sdk.data_model.NetworkDataRequest
 import com.ptsl.network_sdk.data_model.entity.AssessmentDataResponseEntity
+import com.ptsl.network_sdk.data_model.entity.AuthEntity
 import com.ptsl.network_sdk.data_model.entity.FTPCellInfoGetResponse
 import com.ptsl.network_sdk.data_model.entity.FTPThresholdEntity
 import com.ptsl.network_sdk.data_model.logger.LogDataWrapper
@@ -36,6 +37,6 @@ interface ApiService {
     @POST("v903/blWifiDeviceNetworkAssessments/cell-info-by-node-sector")
     suspend fun postFTPCellInfo(@Body request: FTPCellInfoGetDataRequest): BaseResponse<List<FTPCellInfoGetResponse>>
 
-    @GET("v903/blWifiDeviceNetworkAssessments/get-ftp-thresholds")
-    suspend fun getFTPThresholds(): BaseResponse<FTPThresholdEntity>
+    @POST("v903/blWifiDeviceNetworkAssessments/get-ftp-thresholds")
+    suspend fun getFTPThresholds(@Body request: AuthEntity): BaseResponse<FTPThresholdEntity>
 }

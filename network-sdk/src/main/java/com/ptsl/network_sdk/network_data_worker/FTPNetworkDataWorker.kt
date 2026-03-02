@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.work.CoroutineWorker
@@ -138,12 +139,32 @@ class FTPNetworkDataWorker(
             return Triple("Internet connectivity is mandatory for network assessment.", "FTP_INTERNET_UNAVAILABLE", 400)
         }
 
+        // Wi-Fi Check (Strictly forbidden for FTP Capture)
+        if (isWifiConnected()) {
+            Log.w(TAG, "Wi-Fi is connected, rejecting FTP Capture")
+            return Triple(
+                "FTP Capture requires mobile data. Please disable Wi-Fi and ensure Banglalink 4G is active.",
+                "FTP_WIFI_CONNECTED",
+                400
+            )
+        }
+
         // Mobile Data Connection Check
         if (!isMobileNetworkConnected()) {
             Log.w(TAG, "Mobile data not connected for diagnostic capture")
             return Triple(
-                "Mobile data connection is required for FTP Capture. Please disable Wi-Fi and enable mobile data.",
+                "Mobile data connection is required for FTP Capture. Please enable mobile data.",
                 "FTP_MOBILE_DATA_REQUIRED",
+                400
+            )
+        }
+
+        // 4G/LTE Check
+        if (!is4GConnected()) {
+            Log.w(TAG, "Network is not 4G/LTE, rejecting FTP Capture")
+            return Triple(
+                "4G/LTE connection is required for FTP Capture. Currently not on 4G.",
+                "FTP_4G_REQUIRED",
                 400
             )
         }
@@ -360,7 +381,7 @@ class FTPNetworkDataWorker(
             val shouldFetch = cached == null || (System.currentTimeMillis() - cached.lastUpdated > 24 * 60 * 60 * 1000)
             
             if (shouldFetch) {
-                val response = apiService.getFTPThresholds()
+                val response = apiService.getFTPThresholds(getAuth())
                 if (response.statusCode == 200 && response.data != null) {
                     val newThresholds = response.data.apply { 
                         lastUpdated = System.currentTimeMillis()
@@ -464,6 +485,31 @@ class FTPNetworkDataWorker(
             val network = cm.activeNetwork ?: return false
             val caps = cm.getNetworkCapabilities(network) ?: return false
             caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun isWifiConnected(): Boolean {
+        return try {
+            val cm = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val network = cm.activeNetwork ?: return false
+            val caps = cm.getNetworkCapabilities(network) ?: return false
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun is4GConnected(): Boolean {
+        return try {
+            val telephonyManager = applicationContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            val networkType = if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                telephonyManager.dataNetworkType
+            } else {
+                TelephonyManager.NETWORK_TYPE_UNKNOWN
+            }
+            networkType == TelephonyManager.NETWORK_TYPE_LTE
         } catch (e: Exception) {
             false
         }
