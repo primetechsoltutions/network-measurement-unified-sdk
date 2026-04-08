@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Initialize the SDK once at the Activity/Application level
-        networkDataUploader.init(this, "MyBL-Simulation")
+        networkDataUploader.init(this, "MyBL")
 
         // Load the HomeFragment as the starting screen
         if (savedInstanceState == null) {

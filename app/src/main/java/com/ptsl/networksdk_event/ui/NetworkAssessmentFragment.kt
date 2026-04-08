@@ -83,6 +83,9 @@ class NetworkAssessmentFragment : Fragment() {
             eventName,
             uploadType = uploadType
         ) { success, status ->
+            // Print the full response to Logcat for debugging
+            Log.d("SDK_RESONSE", "Status: $success, Message: ${status.message}")
+
             // CRITICAL: We use view lifecycle check before updating UI
             if (isAdded) {
                 activity?.runOnUiThread {
