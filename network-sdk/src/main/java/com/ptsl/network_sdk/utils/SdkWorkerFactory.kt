@@ -6,6 +6,7 @@ import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.ptsl.network_sdk.network_data_worker.FTPNetworkDataWorker
 import com.ptsl.network_sdk.network_data_worker.NetworkDataWorker
+import com.ptsl.network_sdk.network_data_worker.SelectiveNetworkDataWorker
 
 internal class SdkWorkerFactory : WorkerFactory(){
     override fun createWorker(
@@ -28,6 +29,14 @@ internal class SdkWorkerFactory : WorkerFactory(){
                     )
                 FTPNetworkDataWorker::class.java.name ->
                     FTPNetworkDataWorker(
+                        appContext,
+                        workerParameters,
+                        SdkContainer.apiService,
+                        SdkContainer.downloadUploadHelper,
+                        SdkContainer.dao
+                    )
+                SelectiveNetworkDataWorker::class.java.name ->
+                    SelectiveNetworkDataWorker(
                         appContext,
                         workerParameters,
                         SdkContainer.apiService,

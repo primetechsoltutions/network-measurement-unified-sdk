@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#6200EE"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Technology and Operator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/techType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#6200EE"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="4G"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/operatorMccMnc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="MCC: 470 / MNC: 3"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15:02:46"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="#EEEEEE" />
+
+        <!-- Grid for Details -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false">
+
+            <!-- Signal Section -->
+            <LinearLayout android:orientation="vertical" android:layout_columnWeight="1" android:layout_marginEnd="8dp">
+                <TextView android:text="SIGNAL" android:textSize="10sp" android:textStyle="bold" android:textColor="#6200EE" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/rsrp" android:text="RSRP: -84 dBm" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/rsrq" android:text="RSRQ: -8 dB" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/snr" android:text="SNR: 15 dB" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/rssi" android:text="RSSI: -55 dBm" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Cell Info Section -->
+            <LinearLayout android:orientation="vertical" android:layout_columnWeight="1">
+                <TextView android:text="CELL &amp; BAND" android:textSize="10sp" android:textStyle="bold" android:textColor="#6200EE" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/cidEnb" android:text="CID: 1 / eNB: 11469" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/tacPci" android:text="TAC: 1164 / PCI: 274" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/bandArfcn" android:text="Band: 1800 / ARFCN: 1800" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/taBw" android:text="TA: 0 / BW: 0" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Timing/Speed Section (Add marginTop for spacing) -->
+            <LinearLayout android:orientation="vertical" android:layout_columnWeight="1" android:layout_marginTop="12dp" android:layout_marginEnd="8dp">
+                <TextView android:text="PERFORMANCE" android:textSize="10sp" android:textStyle="bold" android:textColor="#6200EE" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/rttLatency" android:text="RTT: 53ms / Lat: 7ms" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/speeds" android:text="DL: 0 / UL: 0 Mbps" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Device/Location Section -->
+            <LinearLayout android:orientation="vertical" android:layout_columnWeight="1" android:layout_marginTop="12dp">
+                <TextView android:text="DEVICE &amp; LOC" android:textSize="10sp" android:textStyle="bold" android:textColor="#6200EE" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/deviceInfo" android:text="Slot 2 / OS 30" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/location" android:text="23.75, 90.39" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </GridLayout>
+
+        <!-- MSISDN and App Event Name Footer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:background="#F5F5F5" />
+        
+        <TextView
+            android:id="@+id/bottomInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MSISDN: MYBL-1023 | Event: Button-3"
+            android:textColor="#999999"
+            android:textSize="11sp"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
