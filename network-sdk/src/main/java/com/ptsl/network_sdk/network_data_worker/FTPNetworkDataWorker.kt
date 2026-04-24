@@ -50,9 +50,9 @@ class FTPNetworkDataWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
-    private val apiService: ApiService = SdkContainer.apiService
-    private val downloader: DownloadUploadHelper= SdkContainer.downloadUploadHelper
-    private val databaseDao: NetworkDao= SdkContainer.dao
+    private val apiService: ApiService by lazy { SdkContainer.init(applicationContext); SdkContainer.apiService }
+    private val downloader: DownloadUploadHelper by lazy { SdkContainer.init(applicationContext); SdkContainer.downloadUploadHelper }
+    private val databaseDao: NetworkDao by lazy { SdkContainer.init(applicationContext); SdkContainer.dao }
     private val TAG = "FTPNetworkDataWorker"
 
     override suspend fun doWork(): Result {

@@ -18,8 +18,15 @@ internal  object SdkContainer {
     lateinit var coroutineScope: CoroutineScope
     lateinit var apiService: ApiService
     lateinit var downloadUploadHelper: DownloadUploadHelper
+    fun isInitialized(): Boolean {
+        return this::database.isInitialized &&
+                this::coroutineScope.isInitialized &&
+                this::apiService.isInitialized &&
+                this::downloadUploadHelper.isInitialized
+    }
 
 
+    @Synchronized
     fun init(context: Context){
         Log.e("Check Init","Class objact name:${ this::class.simpleName}")
         if (this::database.isInitialized && this::apiService.isInitialized && this:: downloadUploadHelper.isInitialized) return // Already initialized

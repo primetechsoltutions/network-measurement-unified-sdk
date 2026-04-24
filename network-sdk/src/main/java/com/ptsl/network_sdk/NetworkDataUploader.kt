@@ -33,6 +33,7 @@ class NetworkDataUploader {
     private lateinit var applicationName: String
 
     private val TAG = "NetworkDataUploader"
+    val isInitialized: Boolean get() = SdkContainer.isInitialized() && this::checkPermissionHandler.isInitialized && this::context.isInitialized
 
     fun init(activity: AppCompatActivity, applicationName: String) {
         setup(activity, activity, CheckPermissionHandler(activity), applicationName)
@@ -54,8 +55,12 @@ class NetworkDataUploader {
         this.checkPermissionHandler = permissionHandler
         this.context = activity.applicationContext
         this.applicationName = appName
-        SdkContainer.init(this.context)
-        Log.i(TAG, "SDK Initialized for $appName via ${owner::class.java.simpleName}")
+        try {
+            SdkContainer.init(this.context)
+            Log.i(TAG, "SDK Initialized for $appName via ${owner::class.java.simpleName}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Critical failure during SDK Initialization: ${e.message}")
+        }
     }
 
     /**
@@ -77,7 +82,7 @@ class NetworkDataUploader {
         uploadType: UploadType,
         callback: (Boolean, UploadStatus) -> Unit
     ) {
-        if (!this::checkPermissionHandler.isInitialized) {
+        if (!isInitialized) {
             Log.e(TAG, "SDK not initialized. Call init() first.")
             callback(
                 false, UploadStatus(
@@ -173,8 +178,13 @@ class NetworkDataUploader {
                               if (result != null) {
                                   val response = result.outputData.getString("hostAppResponse")
 
-                                  val networkDataResponse = response?.let {
-                                      Gson().fromJson(it, NetworkDataResponse::class.java)
+                                  val networkDataResponse = try {
+                                      response?.let {
+                                          Gson().fromJson(it, NetworkDataResponse::class.java)
+                                      }
+                                  } catch (e: Exception) {
+                                      Log.e(TAG, "Failed to parse worker JSON response: ${e.message}")
+                                      null
                                   } ?: NetworkDataResponse(
                                       status = "Failed",
                                       testResult = "Failed",
