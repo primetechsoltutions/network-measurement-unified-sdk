@@ -274,7 +274,7 @@ internal class FTPAssessmentExecutor(
     private fun hasRequiredPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             appContext, Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
             appContext, Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }

@@ -248,7 +248,7 @@ class CheckPermissionHandler private constructor(
         val ctx = safeContext ?: return false
         return ContextCompat.checkSelfPermission(
             ctx, Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
             ctx, Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
