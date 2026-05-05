@@ -177,6 +177,7 @@ internal class FTPAssessmentExecutor(
                 message = message,
                 data = dataResult
             )
+
         } catch (e: TimeoutCancellationException) {
             Log.e(TAG, "Global timeout during assessment ${e.message}")
             try {
@@ -189,7 +190,7 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 408,
-                message = "Network assessment couldn’t be completed due to a processing timeout (60 seconds). Please try again."
+                message = "Network assessment couldn’t be completed due to a processing timeout (60 seconds), Please try again."
             )
         } catch (e: IOException) {
             Log.e(TAG, "Network error during assessment ${e.message}")

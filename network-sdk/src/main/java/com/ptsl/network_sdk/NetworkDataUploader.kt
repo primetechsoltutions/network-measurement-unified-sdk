@@ -186,7 +186,7 @@ class NetworkDataUploader {
                                         NetworkDataResponse(
                                             status = "Failed",
                                             statusCode = 400,
-                                            message = "Assessment Failed"
+                                            message = "Assessment Failed, Please try again."
                                         )
                                     )
                                 )
