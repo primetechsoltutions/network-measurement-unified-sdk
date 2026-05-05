@@ -100,11 +100,14 @@ class NetworkDataUploader {
                     Log.w(TAG, "Permissions not granted for measurement capture.")
 
                     val isGpsEnabled = checkPermissionHandler.isGpsEnabled()
-                    val isPermissionsGranted =
-                        checkPermissionHandler.isAllPermissionsGrantedExcludingGps()
+                    val isLocationPermissionsGranted =
+                        checkPermissionHandler.isLocationPermissionGranted()
+                    val isPhoneStatePermissionsGranted =
+                        checkPermissionHandler.isPhoneStatePermissionGranted()
 
                     val errorMessage = when {
-                        !isPermissionsGranted -> "To continue network assessment, please allow all required permissions."
+                        !isLocationPermissionsGranted -> "To continue the network assessment, please allow Location permission and enable Precise Location if available."
+                        !isPhoneStatePermissionsGranted -> "To continue the network assessment, please allow Phone State permission."
                         !isGpsEnabled -> "To continue network assessment, please enable GPS/location services."
                         else -> "Required permissions are missing."
                     }
@@ -183,7 +186,7 @@ class NetworkDataUploader {
                                         NetworkDataResponse(
                                             status = "Failed",
                                             statusCode = 400,
-                                            message = "Assessment Failed"
+                                            message = "Network assessment couldn’t be completed due to a processing timeout, please try again."
                                         )
                                     )
                                 )

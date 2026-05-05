@@ -10,6 +10,7 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.ptsl.network_sdk.api.ApiService
 import com.ptsl.network_sdk.data_model.AssessmentResult
 import com.ptsl.network_sdk.data_model.CellMetadata
@@ -80,7 +81,7 @@ internal class FTPAssessmentExecutor(
                     status = "Failed",
                     testResult = "Failed",
                     statusCode = 400,
-                    message = "FWA Capture is only supported on Banglalink 4G (LTE) technology."
+                    message = "To continue network assessment, please ensure your Banglalink 4G SIM and mobile data are active."
                 )
             }
 
@@ -92,7 +93,7 @@ internal class FTPAssessmentExecutor(
                     status = "Failed",
                     testResult = "Failed",
                     statusCode = 400,
-                    message = "Banglalink SIM and mobile data must be enabled for FWA Capture."
+                    message = "To continue network assessment, please ensure your Banglalink 4G SIM and mobile data are active."
                 )
             }
 
@@ -160,7 +161,7 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 408,
-                message = "To continue network assessment, please connect using Banglalink mobile data."
+                message = "Network assessment couldn’t be completed due to a processing timeout, please try again."
             )
         } catch (e: IOException) {
             Log.e(TAG, "Network error during assessment ${e.message}")
@@ -169,7 +170,7 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 400,
-                message = "To continue network assessment, please connect using Banglalink mobile data."
+                message = "Network assessment couldn’t be completed due to a processing timeout, please try again."
             )
         } catch (e: Exception) {
             Log.e(TAG, "Unexpected execution error ${e.message}")
@@ -183,7 +184,7 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 400,
-                message = "Network assessment failed due to internal error. please try again"
+                message = "Network assessment failed due to a technical or processing error, please enable all required permissions and try again."
             )
         }
     }
@@ -206,10 +207,16 @@ internal class FTPAssessmentExecutor(
 
 
     private fun performPreFlightChecks(): Triple<String, String, Int>? {
-        // Permission Check
+        // Location Permission Check
         if (!hasRequiredPermissions()) {
-            Log.w(TAG, "Missing required permissions for FTP Capture")
-            return Triple("To continue network assessment, please allow all required permissions.", "FTP_PERMISSION_DENIED", 400)
+            Log.w(TAG, "Missing location permissions for FTP Capture")
+            return Triple("To continue the network assessment, please allow Location permission and enable Precise Location if available.", "FTP_PERMISSION_DENIED", 400)
+        }
+
+        // Phone State Permission Check
+        if (!isPhoneStatePermissionGranted()) {
+            Log.w(TAG, "Missing Phone State permissions for FTP Capture")
+            return Triple("To continue the network assessment, please allow Phone State permission.", "FTP_PHONESTATE_PERMISSION_DENIED", 400)
         }
 
         // GPS Enable Check
@@ -222,7 +229,7 @@ internal class FTPAssessmentExecutor(
         if (!isInternetAvailable()) {
             Log.w(TAG, "No internet access for diagnostic capture")
             return Triple(
-                "To continue network assessment, please enable mobile data.",
+                "To continue network assessment, please enable and use Banglalink 4G internet.",
                 "FTP_INTERNET_UNAVAILABLE",
                 400
             )
@@ -262,7 +269,7 @@ internal class FTPAssessmentExecutor(
         if (!isBanglalinkDataEnabled()) {
             Log.w(TAG, "Banglalink data not active or SIM mismatch")
             return Triple(
-                "To continue network assessment, please insert a Banglalink 4G SIM.",
+                "To continue network assessment, please switch to the Banglalink 4G network and use Banglalink 4G internet.",
                 "FTP_BANGLALINK_DATA_UNAVAILABLE",
                 400
             )
@@ -590,6 +597,11 @@ internal class FTPAssessmentExecutor(
         } catch (_: Exception) {
         }
         return "0-1"
+    }
+   private fun isPhoneStatePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            appContext, Manifest.permission.READ_PHONE_STATE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 }
 
