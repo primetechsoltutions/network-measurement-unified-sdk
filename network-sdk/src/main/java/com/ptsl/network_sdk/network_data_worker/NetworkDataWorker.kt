@@ -167,7 +167,7 @@ class NetworkDataWorker(
             val cells = try {
                 val hasPermission = ActivityCompat.checkSelfPermission(
                     applicationContext, Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED ||
+                ) == PackageManager.PERMISSION_GRANTED &&
                         ActivityCompat.checkSelfPermission(
                             applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
@@ -290,7 +290,8 @@ class NetworkDataWorker(
                     mnc = si?.mnc?.toString() ?: "-1"
                 }
             }
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
         return "0${mnc}"
     }
 

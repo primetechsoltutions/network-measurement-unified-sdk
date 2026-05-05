@@ -100,11 +100,14 @@ class NetworkDataUploader {
                     Log.w(TAG, "Permissions not granted for measurement capture.")
 
                     val isGpsEnabled = checkPermissionHandler.isGpsEnabled()
-                    val isPermissionsGranted =
-                        checkPermissionHandler.isAllPermissionsGrantedExcludingGps()
+                    val isLocationPermissionGranted =
+                        checkPermissionHandler.isLocationPermissionGranted()
+                    val isPhoneStatePermissionGranted =
+                        checkPermissionHandler.isPhoneStatePermissionGranted()
 
                     val errorMessage = when {
-                        !isPermissionsGranted -> "To continue network assessment, please allow all required permissions."
+                        !isLocationPermissionGranted -> "To continue the network assessment, please allow Location permission and enable Precise Location if available."
+                        !isPhoneStatePermissionGranted -> "To continue network assessment, please allow the phone state permissions."
                         !isGpsEnabled -> "To continue network assessment, please enable GPS/location services."
                         else -> "Required permissions are missing."
                     }

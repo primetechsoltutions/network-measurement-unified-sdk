@@ -56,6 +56,23 @@ internal class FTPAssessmentExecutor(
 
 
     suspend fun execute(input: FTPAssessmentExecutionInput): NetworkDataResponse {
+        var networkCompromised = false
+        val cm = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+
+        val wifiCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: android.net.Network) {
+                networkCompromised = true
+            }
+        }
+
+        try {
+            val request = android.net.NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build()
+            cm?.registerNetworkCallback(request, wifiCallback)
+        } catch (_: Exception) {
+        }
+
+
         return try {
             val preFlightError = performPreFlightChecks()
             if (preFlightError != null) {
@@ -103,6 +120,18 @@ internal class FTPAssessmentExecutor(
                 FTPNetworkDataRequest(auth = authEntity, data = ftpData)
             )
 
+            val isSimSwapped = !isBanglalinkDataEnabled()
+            if (networkCompromised || isSimSwapped) {
+                logValidationFailure(
+                    input, "Network changed during assessment", "FTP_NETWORK_CHANGED"
+                )
+                return response(
+                    status = "Failed",
+                    testResult = "Failed",
+                    statusCode = 400,
+                    message = "To continue network assessment, please turn off Wi-Fi and use Banglalink 4G internet."
+                )
+            }
 
             val thresholds = databaseDao.getFTPThresholds() ?: FTPThresholdEntity()
             val isRsrpPass = Math.abs(ftpData.rsrp) <= thresholds.rsrpThreshold
@@ -160,7 +189,7 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 408,
-                message = "To continue network assessment, please connect using Banglalink mobile data."
+                message = "Network assessment couldn’t be completed due to a processing timeout (60 seconds). Please try again."
             )
         } catch (e: IOException) {
             Log.e(TAG, "Network error during assessment ${e.message}")
@@ -183,8 +212,14 @@ internal class FTPAssessmentExecutor(
                 status = "Failed",
                 testResult = "Failed",
                 statusCode = 400,
-                message = "Network assessment failed due to internal error. please try again"
+                message = "Network assessment failed due to a technical or processing error. Please enable all required permissions and try again."
             )
+        } finally {
+            Log.d(TAG, "execute: call finally block, unregistering network callback")
+            try {
+                cm?.unregisterNetworkCallback(wifiCallback)
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -209,13 +244,21 @@ internal class FTPAssessmentExecutor(
         // Permission Check
         if (!hasRequiredPermissions()) {
             Log.w(TAG, "Missing required permissions for FTP Capture")
-            return Triple("To continue network assessment, please allow all required permissions.", "FTP_PERMISSION_DENIED", 400)
+            return Triple(
+                "To continue network assessment, please allow all required permissions.",
+                "FTP_PERMISSION_DENIED",
+                400
+            )
         }
 
         // GPS Enable Check
         if (!CommonUtils.isGpsEnabled(appContext)) {
             Log.w(TAG, "GPS is disabled for FTP Capture")
-            return Triple("To continue network assessment, please enable GPS/location services.", "FTP_GPS_DISABLED", 400)
+            return Triple(
+                "To continue network assessment, please enable GPS/location services.",
+                "FTP_GPS_DISABLED",
+                400
+            )
         }
 
         // Internet Connectivity Check
